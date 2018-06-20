@@ -26,7 +26,7 @@ const registerUser = (regNo, name, email, password) => {
         newUser.save()
             .then(() => resolve(message(201, 'User Registered Successfully !')))
             .catch((err) => {
-                if (err.code = 11000) {
+                if (err.code == 11000) {
                     reject(message(400, 'User Already Registered !'));
                 } else {
                     reject(message(500, 'Internal Server Error !'));
