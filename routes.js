@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const register = require('./functions/register');
 const login = require('./functions/login');
+const users = require('./functions/users');
 const config = require('./config/config.json');
 
 const router = (router) => {
@@ -41,7 +42,27 @@ const router = (router) => {
 			})
 			.catch(err => res.status(err.status).json({ message: err.message }));
 		}
-	});
+    });
+
+    router.get('/users', (req, res) => {
+        users.getUsers()
+            .then(result => res.json(result))
+            .catch(err => res.status(err.status).json({message : err.message}));
+    });
+
+    function checkToken(req) {
+        const token = req.headers['x-access-token'];
+        if (token) {
+            try {
+                var decoded = jwt.verify(token, config.secret);
+                return decoded.message === req.params.id;
+            } catch (err) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 };
 
 module.exports = router;
