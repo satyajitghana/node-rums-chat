@@ -10,4 +10,14 @@ const getUsers = () => {
     });
 }
 
+const getUserMongoose = (regNo) => {
+    return new Promise((resolve, reject) => {
+        User.find({regNo: regNo}, {_id: 1})
+            .then(user => resolve(user[0]))
+            .catch(err => reject(err));
+    });
+}
+
+module.exports.getUserMongoose = getUserMongoose;
+
 module.exports.getUsers = getUsers;

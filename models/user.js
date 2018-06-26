@@ -12,7 +12,8 @@ const userSchema = new Schema({
     name  : String,
     email : String,
     hashedPassword : String,
-    createdAt : Date
+    createdAt : Date,
+    chat : [{type : Schema.Types.ObjectId, ref : 'Chat'}]
 })
 
 const User = connection.mongoose.model('users', userSchema);

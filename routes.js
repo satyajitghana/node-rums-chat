@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const register = require('./functions/register');
 const login = require('./functions/login');
 const users = require('./functions/users');
+const getChat = require('./functions/getChat');
 const config = require('./config/config.json');
 
 const router = (router) => {
@@ -44,10 +45,19 @@ const router = (router) => {
 		}
     });
 
+    // please for god's sake *NEVER* have this as a get request - shadowleaf (satyajit_ghana)
+    router.get('/get_chats/:id', (req, res) => {
+        // add the check token here, currently this is insecure, and should be fixed ASAP - shadowleaf (satyajit_ghana)
+        var regNo = req.params.id;
+        getChat.getDMs(regNo)
+            .then(result => res.json(result))
+            .catch(err => res.status(err.status).json({ message: err.message }));
+    });
+
     router.get('/users', (req, res) => {
         users.getUsers()
             .then(result => res.json(result))
-            .catch(err => res.status(err.status).json({message : err.message}));
+            .catch(err => res.status(err.status).json({ message : err.message }));
     });
 
     function checkToken(req) {
