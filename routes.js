@@ -7,6 +7,8 @@ const register = require('./functions/register');
 const login = require('./functions/login');
 const users = require('./functions/users');
 const getChat = require('./functions/getChat');
+const getMessages = require('./functions/getMessages');
+const sendMessage = require('./functions/sendMessage');
 const config = require('./config/config.json');
 
 const router = (router) => {
@@ -45,6 +47,19 @@ const router = (router) => {
 		}
     });
 
+    router.post('/send_message/:id', (req, res) => {
+        const chatID = req.params.id;
+        const from = req.body.from;
+        const to = req.body.to;
+        const text = req.body.text;
+
+        sendMessage(chatID, from , to, text)
+            .then(result => {
+                res.status(result.status).json({ message : result.message });
+            })
+            .catch(err => res.status(err.status).json({ message : result.message }));
+    });
+
     // please for god's sake *NEVER* have this as a get request - shadowleaf (satyajit_ghana)
     router.get('/get_chats/:id', (req, res) => {
         // add the check token here, currently this is insecure, and should be fixed ASAP - shadowleaf (satyajit_ghana)
@@ -54,13 +69,30 @@ const router = (router) => {
             .catch(err => res.status(err.status).json({ message: err.message }));
     });
 
+    router.get('/users/:id', (req, res) => {
+        var regNo = req.params.id;
+        users.getUser(regNo)
+            .then(result => res.json({message : result}))
+            .catch(err => res.status(err.status).json({ message : err.message }));
+    });
+
     router.get('/users', (req, res) => {
         users.getUsers()
             .then(result => res.json(result))
             .catch(err => res.status(err.status).json({ message : err.message }));
     });
 
-    function checkToken(req) {
+    // Please don't use get here also, or secure the connection with HTTPS - shadowleaf (satyajit_ghana)
+    router.get('/get_messages/:id', (req, res) => {
+        var chatID = req.params.id;
+        getMessages.getChat(chatID)
+            .then(result => res.json(result))
+            .catch(err => res.status(err.status).json({ message : err.message }));
+    });
+
+    router.get('*', (req, res) => {res.status(404).json({message : 'This page doesn\'t exist, what ya doing bruh ?'})});
+
+    const checkToken = (req) => {
         const token = req.headers['x-access-token'];
         if (token) {
             try {

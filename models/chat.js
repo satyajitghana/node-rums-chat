@@ -21,5 +21,5 @@ const chatSchema = new Schema({
 const Chat = connection.mongoose.model('Chat', chatSchema);
 // Since it's embedded now, no need of this const Message = connection.mongoose.model('Message', messageSchema);
 
-module.exports.Chat = Chat;
+module.exports = Chat;
 // Same here, not required, Chat takes care of the messages module.exports.Message = Message;
